@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const moment = require("moment");
 
 const userSchema = mongoose.Schema({
-    name: {
+    id: {
         type:String,
         maxlength:50
     },
@@ -18,9 +18,11 @@ const userSchema = mongoose.Schema({
         type: String,
         minglength: 5
     },
-    lastname: {
-        type:String,
-        maxlength: 50
+    dateOfBirth:{
+        type:Date
+    },
+    address:{
+        type:String
     },
     role : {
         type:Number,
@@ -40,7 +42,6 @@ userSchema.pre('save', function( next ) {
     var user = this;
     
     if(user.isModified('password')){    
-        // console.log('password changed')
         bcrypt.genSalt(saltRounds, function(err, salt){
             if(err) return next(err);
     
