@@ -81,11 +81,14 @@ userSchema.methods.generateToken = function(cb) {
 userSchema.statics.findByToken = function (token, cb) {
     var user = this;
 
+    //토큰 해독
     jwt.verify(token,'secret',function(err, decode){
-        user.findOne({"_id":decode, "token":token}, function(err, user){
-            if(err) return cb(err);
-            cb(null, user);
-        })
+        //토큰을 해독한 값을 데이터베이스의 _id와 비교하고 토큰을 데이터베이스의 토큰과 비교
+        user.findOne({"_id":decode, "token":token})
+            .exec((err,user)=>{
+                if(err) return cb(err)
+                cb(null,user)
+            })
     })
 }
 
