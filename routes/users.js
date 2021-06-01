@@ -54,4 +54,12 @@ router.post("/login", (req, res) => {
         })
 });
 
+router.get("/logout",auth,(req,res)=>{
+    User.findOneAndUpdate({id:req.user.id},{token:"", tokenExp:""})
+        .exec((err,doc)=>{
+            if(err) return res.status(400).json({success: false, err})
+            return res.status(200).json({success:true})
+        })      
+})
+
 module.exports = router;
