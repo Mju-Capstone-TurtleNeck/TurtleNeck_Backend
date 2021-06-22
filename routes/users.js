@@ -103,4 +103,13 @@ router.post("/uploadImage", (req, res) => {
     })
 })
 
+router.post("/getImage", (req, res) => {
+    User.findOne({"id":req.body.id})
+        .exec((err,user)=>{
+            if(err) return res.status(400).json({success:false, err})
+            else if(!user) return res.status(400).json({success:false, message:"That user is not exist"})
+            return res.status(200).json({success:true, imageURL:user.image})
+        })
+})
+
 module.exports = router;
