@@ -47,7 +47,7 @@ const user={
                         res.cookie('w_authExp',user.tokenExp)
                             .cookie('w_auth',user.token)
                             .status(200)
-                            .json({loginSuccess:true, userId:user._id})
+                            .json({loginSuccess:true, userId:user._id, token:user.token})
                     })
                 })      
             })
@@ -61,7 +61,7 @@ const user={
             })      
     },
 
-    uploadImage:  (req, res) => {
+    uploadImage: (req, res) => {
         User.findOne({"_id":req.body.userId})
             .exec((err,user)=>{
                 if(err) return res.status(400).json({success: false, err})
