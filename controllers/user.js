@@ -29,16 +29,14 @@ const user={
     login: async (req, res) => {
         try{
             const user= await userService.findUser(req.body.id)
-            if(!user) return res.json({loginSuccess: false,message: "Auth failed, ID is not found"})
+            if(!user) return res.status(400).json({loginSuccess: false,message: "Auth failed, ID is not found"})
     
-            user.comparePassword(req.body.password,(err,isMatch)=>{
+            user.comparePassword(req.body.password, async (err,isMatch)=>{
                 //일치하지 않는 경우 예외처리
-                if(!isMatch) return res.json({loginSuccess:false, message: '비밀번호를 잘못 입력하셨습니다'})
+                if(!isMatch) return res.status(400).json({loginSuccess:false, message: '비밀번호를 잘못 입력하셨습니다'})
                 //일치할 경우 토큰 생성
-                user.generateToken((err,user)=>{
-                    if(err) return res.status(400).send(err)
-                    res.cookie('w_authExp',user.tokenExp).cookie('w_auth',user.token).status(200).json({loginSuccess:true, userId:user._id, token: user.token})
-                })
+                let token = await userService.generateToken(user)
+                res.status(200).json({loginSuccess:true, userId:user._id, token: token})
             })
         }catch(err){
             console.log(err)
