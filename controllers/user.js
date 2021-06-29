@@ -1,16 +1,14 @@
 const userService= require("../services/users")
+const jwt= require("../modules/jwt")
 
 const user={
     auth: (req,res)=>{
         res.status(200).json({
-            id:req.user.id,
-            isAdmin:req.user.role===0?false:true,
-            isAuth:true,
+            rol: req.user.role,
+            id: req.user.id,
             email: req.user.email,
-            dateOfBirth:req.user.dateOfBirth,
-            address:req.user.address,
-            role: req.user.role,
-            image: req.user.image
+            _id: req.user._id,
+            isAuth:true
         })
     },
 
@@ -31,12 +29,12 @@ const user={
             const user= await userService.findUser(req.body.id)
             if(!user) return res.status(400).json({loginSuccess: false,message: "Auth failed, ID is not found"})
     
-            user.comparePassword(req.body.password, async (err,isMatch)=>{
+            user.comparePassword(req.body.password, async(err,isMatch)=>{
                 //일치하지 않는 경우 예외처리
                 if(!isMatch) return res.status(400).json({loginSuccess:false, message: '비밀번호를 잘못 입력하셨습니다'})
                 //일치할 경우 토큰 생성
-                let token = await userService.generateToken(user)
-                res.status(200).json({loginSuccess:true, userId:user._id, token: token})
+                const token = await jwt.sign(user)
+                res.json({loginSuccess: true, token: token.token})
             })
         }catch(err){
             console.log(err)
@@ -45,8 +43,7 @@ const user={
 
     logout: async (req,res)=>{
         try{
-            const result= await userService.logout(req.user._id)
-            return res.status(200).json({success: true});
+            return res.status(200).json({success: true, isAuth: false});
         }catch(err){
             console.log(err)
         }   
