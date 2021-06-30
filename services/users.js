@@ -8,6 +8,11 @@ const user={
         return user
     },
 
+    findUserAndUpdate: async (userId, filePath)=>{
+        const user= User.findOneAndUpdate({id: userId},{image: filePath})
+        return user
+    },
+
     registerUser: async (userContent)=>{
         const user= new User(userContent)
         const saveResult= user.save()

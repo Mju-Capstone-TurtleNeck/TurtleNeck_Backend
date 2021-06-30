@@ -14,30 +14,43 @@ const user={
 
     register: async (req, res) => {
         try{
-            const user= await userService.findUser(req.body.id)
-            if(user) return res.status(400).json({success:false, message:"Try Another Id"})
-    
             const saveUserResult= await userService.registerUser(req.body)
             return res.status(200).json({success:true, user:saveUserResult})
         }catch(err){
+            if(err.code==11000){
+                return res.status(400).json({success:false, message:"Mail Duplicate"})
+            }else{
+                return res.status(500).json({success:false, err})
+            }
+        }
+    },
+
+    idCheck: async (req,res)=>{
+        try{
+            const user= await userService.findUser(req.body.id)
+            if(user) return res.status(400).json({success:false, message:"ID Duplicate"})
+            return res.status(200).json({success: true})
+        }catch(err){
             console.log(err)
+            return res.status(500).json({success:false, err})
         }
     },
 
     login: async (req, res) => {
         try{
             const user= await userService.findUser(req.body.id)
-            if(!user) return res.status(400).json({loginSuccess: false,message: "Auth failed, ID is not found"})
+            if(!user) return res.status(400).json({success: false,message: "Wrong ID"})
     
             user.comparePassword(req.body.password, async(err,isMatch)=>{
                 //일치하지 않는 경우 예외처리
-                if(!isMatch) return res.status(400).json({loginSuccess:false, message: '비밀번호를 잘못 입력하셨습니다'})
+                if(!isMatch) return res.status(400).json({success:false, message: 'Wrong Password'})
                 //일치할 경우 토큰 생성
                 const token = await jwt.sign(user)
-                res.json({loginSuccess: true, token: token.token})
+                res.status(200).json({success: true, token: token.token})
             })
         }catch(err){
             console.log(err)
+            return res.status(500).json({success:false, err})
         }
     },
 
@@ -46,26 +59,29 @@ const user={
             return res.status(200).json({success: true, isAuth: false});
         }catch(err){
             console.log(err)
+            return res.status(500).json({success:false, err})
         }   
     },
 
     uploadImage: async (req, res) => {
         try{
-            const user= await userService.findUser(req.body.id)
-            user.image= res.req.file.filename
+            const user= await userService.findUserAndUpdate(req.body.id,res.req.file.path)
+            if(!user) res.status(400).json({success:false, message:"No User"})
             return res.status(200).json({success: true, image: res.req.file.path, fileName: res.req.file.filename})
         }catch(err){
             console.log(err)
+            return res.status(500).json({success:false, err})
         }
-    },
+    }, 
 
     getImage: async (req, res) => {
         try{
             const user= await userService.findUser(req.body.id)
-            if(!user) return res.status(400).json({success: false, message: "That user is not exist"})
+            if(!user) return res.status(400).json({success: false, message: "No User"})
             return res.status(200).json({success: true, imageURL: user.image})
         }catch(err){
             console.log(err)
+            return res.status(500).json({success:false, err})
         }
     }
 }
