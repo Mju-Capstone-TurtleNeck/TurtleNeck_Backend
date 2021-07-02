@@ -3,7 +3,7 @@ const jwt= require("jsonwebtoken")
 const config= require("../config/tokenKey")
 
 const user={
-    findUser: async (userId)=>{
+    findUserByID: async (userId)=>{
         const user= User.findOne({id: userId})
         return user
     },
@@ -17,6 +17,11 @@ const user={
         const user= new User(userContent)
         const saveResult= user.save()
         return saveResult
+    },
+
+    findUserByEmail: async (userEmail)=>{
+        const user= User.findOne({email: userEmail})
+        return user
     }
 }
 
