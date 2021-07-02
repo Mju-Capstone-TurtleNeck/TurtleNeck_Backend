@@ -15,5 +15,6 @@ router.post("/id-check",userController.idCheck)
 router.post("/login", userController.login)
 router.post("/upload-image", auth, upload.single("image"),userController.uploadImage)
 router.post("/get-image",auth, userController.getImage)
+router.post("/find-id", userController.findID)
 
 module.exports = router;

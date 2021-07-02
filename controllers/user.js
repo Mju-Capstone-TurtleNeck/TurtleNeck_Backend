@@ -1,4 +1,5 @@
 const userService= require("../services/users")
+const nodemailer= require("../modules/nodemailer")
 const jwt= require("../modules/jwt")
 
 const user={
@@ -27,7 +28,7 @@ const user={
 
     idCheck: async (req,res)=>{
         try{
-            const user= await userService.findUser(req.body.id)
+            const user= await userService.findUserByID(req.body.id)
             if(user) return res.status(400).json({success:false, message:"ID Duplicate"})
             return res.status(200).json({success: true})
         }catch(err){
@@ -38,7 +39,7 @@ const user={
 
     login: async (req, res) => {
         try{
-            const user= await userService.findUser(req.body.id)
+            const user= await userService.findUserByID(req.body.id)
             if(!user) return res.status(400).json({success: false,message: "Wrong ID"})
     
             user.comparePassword(req.body.password, async(err,isMatch)=>{
@@ -76,11 +77,24 @@ const user={
 
     getImage: async (req, res) => {
         try{
-            const user= await userService.findUser(req.body.id)
+            const user= await userService.findUserByID(req.body.id)
             if(!user) return res.status(400).json({success: false, message: "No User"})
             return res.status(200).json({success: true, imageURL: user.image})
         }catch(err){
             console.log(err)
+            return res.status(500).json({success:false, err})
+        }
+    },
+
+    findID: async (req,res)=>{
+        try{
+            const user= await userService.findUserByEmail(req.body.email)
+            if(!user) return res.status(400).json({success: false, message: "No User"})
+
+            const transporter= await nodemailer.transport()
+            const info= await nodemailer.send(user.email, user.id, transporter)
+            return res.status(200).json({success: true, message: "Send message to user"})
+        }catch(err){
             return res.status(500).json({success:false, err})
         }
     }
