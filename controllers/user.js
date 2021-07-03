@@ -92,8 +92,34 @@ const user={
             if(!user) return res.status(400).json({success: false, message: "No User"})
 
             const transporter= await nodemailer.transport()
-            const info= await nodemailer.send(user.email, user.id, transporter)
+            const info= await nodemailer.sendID(user.email, user.id, transporter)
             return res.status(200).json({success: true, message: "Send message to user"})
+        }catch(err){
+            return res.status(500).json({success:false, err})
+        }
+    },
+
+    sendAuthNumber: async (req,res)=>{
+        try{
+            const user= await userService.findUserByEmailAndID(req.body.id, req.body.email)
+            if(!user) return res.status(400).json({success: false, message: "No User"})
+      
+            const ranNum = Math.floor(Math.random()*(999999-111111+1)) + 111111
+            const transporter= await nodemailer.transport()
+            const info= await nodemailer.sendCertificationNum(user.email, transporter, ranNum)
+            return res.status(200).json({success: true, AuthNumber: ranNum})
+        }catch(err){
+            return res.status(500).json({success:false, err})
+        }
+    },
+
+    resetPass: async (req,res)=>{
+        try{
+            const user= await userService.findUserByID(req.body.id)
+            if(!user) return res.status(400).json({success: false, message: "No User"})
+
+            const saveResult= await userService.resetPassword(req.body.password, user)
+            return res.status(200).json({success: true, message: "Password reset"})
         }catch(err){
             return res.status(500).json({success:false, err})
         }
