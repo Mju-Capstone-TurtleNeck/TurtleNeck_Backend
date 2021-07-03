@@ -8,8 +8,8 @@ const user={
         return user
     },
 
-    findUserAndUpdate: async (userId, filePath)=>{
-        const user= User.findOneAndUpdate({id: userId},{image: filePath})
+    findUserAndUpdate: async (userID, filePath)=>{
+        const user= User.findOneAndUpdate({id: userID},{image: filePath})
         return user
     },
 
@@ -22,6 +22,17 @@ const user={
     findUserByEmail: async (userEmail)=>{
         const user= User.findOne({email: userEmail})
         return user
+    },
+
+    findUserByEmailAndID: async (userID, userEmail)=>{
+        const user= User.findOne({email: userEmail, id: userID})
+        return user
+    },
+
+    resetPassword: async (userPass, user)=>{
+        user.password= userPass
+        const saveResult= user.save()
+        return saveResult
     }
 }
 

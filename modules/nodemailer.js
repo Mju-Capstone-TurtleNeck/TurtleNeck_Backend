@@ -16,13 +16,24 @@ const mail={
         return transporter
     },
 
-    send: async (toMail, id, transporter)=>{
+    sendID: async (toMail, id, transporter)=>{
         let info= transporter.sendMail({
             from: `"Dr.G Team" <${mailInfo.mail}>`,
             to: toMail,
             subject: "Dr.G Team: 회원님의 아이디를 알려드립니다",
             html: `<h3>회원님의 아이디는 다음과 같습니다</h3>
                    <p>${id}</p>`
+        })
+        return info
+    },
+
+    sendCertificationNum: async (toMail, transporter, certifNum)=>{
+        let info= transporter.sendMail({
+            from: `"Dr.G Team" <${mailInfo.mail}>`,
+            to: toMail,
+            subject: "Dr.G Team: 회원님이 요청하신 인증번호를 알려드립니다",
+            html: `<h3>인증번호는 다음과 같습니다</h3>
+                   <p>${certifNum}</p>`
         })
         return info
     }
