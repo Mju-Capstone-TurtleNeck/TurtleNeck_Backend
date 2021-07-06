@@ -17,12 +17,13 @@ const mail={
     },
 
     sendID: async (toMail, id, transporter)=>{
+        let secretID= id.replace(id.substr(-4),'****')
         let info= transporter.sendMail({
             from: `"Dr.G Team" <${mailInfo.mail}>`,
             to: toMail,
             subject: "Dr.G Team: 회원님의 아이디를 알려드립니다",
             html: `<h3>회원님의 아이디는 다음과 같습니다</h3>
-                   <p>${id}</p>`
+                   <p>${secretID}</p>`
         })
         return info
     },
