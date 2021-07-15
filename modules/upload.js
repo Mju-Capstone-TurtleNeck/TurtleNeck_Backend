@@ -5,7 +5,9 @@ const storage = multer.diskStorage({
       cb(null, "uploads/")
     },
     filename: (req, file, cb) => {
-      cb(null, `${Date.now()}_${file.originalname}`)
+      let date= new Date()
+      let today= date.getFullYear()+"-"+('0' + (date.getMonth() + 1)).slice(-2)+"-"+('0' + date.getDate()).slice(-2)
+      cb(null, `${today}_${file.originalname}`)
     },
     fileFilter:(req,file,cb)=>{
         const ext=path.extname(file.originalname)
