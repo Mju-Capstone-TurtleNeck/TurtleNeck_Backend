@@ -9,7 +9,7 @@ const user={
     },
 
     findUserAndUpdate: async (userID, filePath)=>{
-        const user= User.findOneAndUpdate({id: userID},{image: filePath})
+        const user= User.findOneAndUpdate({id: userID},{$push: {image: filePath}})
         return user
     },
 
