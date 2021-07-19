@@ -66,9 +66,10 @@ const user={
 
     uploadImage: async (req, res) => {
         try{
-            const user= await userService.findUserAndUpdate(req.body.id,res.req.file.path)
+            const decoded= await jwt.verify(req.headers.token)
+            const user= await userService.findUserAndUpdate(decoded.id,res.req.file.path, req.body.postureStatusInfo)
             if(!user) res.status(400).json({success:false, message:"No User"})
-            return res.status(200).json({success: true, image: res.req.file.path, fileName: res.req.file.filename})
+            return res.status(200).json({success: true, image: res.req.file.path, fileName: res.req.file.filename, postureStatusInfo: req.body.postureStatusInfo})
         }catch(err){
             console.log(err)
             return res.status(500).json({success:false, err})
@@ -77,9 +78,10 @@ const user={
 
     getImage: async (req, res) => {
         try{
-            const user= await userService.findUserByID(req.body.id)
+            const decoded= await jwt.verify(req.headers.token)
+            const user= await userService.findUserByDecoded(decoded.id)
             if(!user) return res.status(400).json({success: false, message: "No User"})
-            return res.status(200).json({success: true, imageURL: user.image})
+            return res.status(200).json({success: true, imageURL: user.image, postureStatusInfo: user.postureStatusInfo})
         }catch(err){
             console.log(err)
             return res.status(500).json({success:false, err})

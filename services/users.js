@@ -8,8 +8,8 @@ const user={
         return user
     },
 
-    findUserAndUpdate: async (userID, filePath)=>{
-        const user= User.findOneAndUpdate({id: userID},{$push: {image: filePath}})
+    findUserAndUpdate: async (decoded, filePath, postureStatusInfo)=>{
+        const user= User.findOneAndUpdate({_id: decoded},{$push: {image: filePath, postureStatusInfo: postureStatusInfo}})
         return user
     },
 
@@ -26,6 +26,12 @@ const user={
 
     findUserByEmailAndID: async (userID, userEmail)=>{
         const user= User.findOne({email: userEmail, id: userID})
+        return user
+    },
+
+    findUserByDecoded: async(decoded)=>{
+        console.log(decoded)
+        const user= User.findOne({_id: decoded})
         return user
     },
 
